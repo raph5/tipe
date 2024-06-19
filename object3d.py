@@ -16,7 +16,7 @@ class Object3d :
 
 def create_cube(params: Vector, index: int, color: Vector) -> Object3d :
     vertex_buffer = []
-    for i in range(0, 144, 5) :
+    for i in range(0, 96, 4) :
         vertex_buffer.append(params.sub_vecotr(index+i, index+i+4))
     index_buffer = []
     for i in range(0, 24, 4) :

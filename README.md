@@ -6,7 +6,7 @@
 
 # Première Application
 
-Pour prendre en main les sujet je vais créer un environnement où tester différentes techniques de rendu différentiel. Cet environnement consistera en un script go capable de rendre des objets simple comme des formes géométriques. L’objectif sera en suite de créer plusieurs algorithmes de rendu différentiel capables d’optimiser les paramètres de là scène pour atteindre un résultat souhaité.
+Pour prendre en main les sujet je vais créer un environnement où tester différentes techniques de rendu différentiel. Cet environnement consistera en un script go capable de rendre des objets simples comme des formes géométriques. L’objectif sera ensuite de créer plusieurs algorithmes de rendu différentiel capables d’optimiser les paramètres de là scène pour atteindre un résultat souhaité.
 
 Je vais maintenant passer en revue les principales composantes d'un algorithme de rendu différentiel.
 

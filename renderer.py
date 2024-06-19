@@ -8,8 +8,7 @@ from object3d import Object3d, create_cube, create_triangle
 from hit import Hit
 
 
-LIGHT_SOURCE = Vector([ Var(1), Var(-1), Var(1) ]).normalize()
-SAMPLE_SIZE = 2
+SAMPLE_SIZE = 6
 
 
 def render(params: Vector, width: int, height: int) -> Vector :
@@ -18,10 +17,11 @@ def render(params: Vector, width: int, height: int) -> Vector :
     # initialisation de la scène
     camera = IsometricCamera()
     default_color = params.sub_vecotr(0, 3)
-    triangle_color = params.sub_vecotr(3, 6)
+    cube_color = params.sub_vecotr(3, 6)
+    light_source = params.sub_vecotr(6, 9)
     scene = [
-        create_triangle(params, 6, triangle_color)
-        # create_cube(params, 6, cube_color)
+        # create_triangle(params, 6, triangle_color)
+        create_cube(params, 9, cube_color)
     ]
 
     # projette les vertex de chaque objects dans l'espace caméra
@@ -38,14 +38,14 @@ def render(params: Vector, width: int, height: int) -> Vector :
             for i in range(SAMPLE_SIZE) :
                 ray_x = -1 + pixel_width*x + pixel_width*random.random()
                 ray_y = -1 + pixel_height*y + pixel_height*random.random()
-                color += trace_path(Var(ray_x), Var(ray_y), scene, default_color)
+                color += trace_path(Var(ray_x), Var(ray_y), scene, default_color, light_source)
             color /= SAMPLE_SIZE
             pixel_values.extend(color.coord)
 
     return Vector(pixel_values)
 
 
-def trace_path(x: Var, y: Var, scene: list[Object3d], default_color: Vector) -> Vector :
+def trace_path(x: Var, y: Var, scene: list[Object3d], default_color: Vector, light_source: Vector) -> Vector :
     hit: Hit|None = None
 
     for o in scene :
@@ -54,8 +54,9 @@ def trace_path(x: Var, y: Var, scene: list[Object3d], default_color: Vector) -> 
             v1 = o.projection_buffer[o.index_buffer[i+0]]
             v2 = o.projection_buffer[o.index_buffer[i+1]]
             v3 = o.projection_buffer[o.index_buffer[i+2]]
-            lambda1, lambda2, lambda3 = barycentric_coordinates(Vector([x, y]), v1, v2, v3)
-            if lambda1.value>0 and lambda2.value>0 and lambda3.value>0 :
+            is_triangle, lambda1, lambda2, lambda3 = barycentric_coordinates(Vector([x, y]), v1, v2, v3)
+
+            if is_triangle and lambda1.value>0 and lambda2.value>0 and lambda3.value>0 :
                 h = Hit(o, v1, v2, v3, lambda1, lambda2, lambda3)
                 z = h.getZ()
                 if z.value > maxZ :
@@ -67,4 +68,4 @@ def trace_path(x: Var, y: Var, scene: list[Object3d], default_color: Vector) -> 
 
     normal = hit.getNormal()
     color = hit.getObjectColor()
-    return color * abs(normal.dot(LIGHT_SOURCE))
+    return color * abs(normal.dot(light_source))
